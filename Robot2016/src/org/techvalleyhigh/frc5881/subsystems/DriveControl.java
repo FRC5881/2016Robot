@@ -81,6 +81,8 @@ public class DriveControl extends Subsystem {
     private final SpeedController rightSpeedController2 = RobotMap.driveControlRightSpeedController2;
     private final RobotDrive robotDrive = RobotMap.driveControlRobotDrive;
 
+	private final PIDController gyroPID = new PIDController(7, 2, 0, RobotMap.driveControlDigitalGyro, null);
+
     /**
      * Object for access to the 2016 First Choice 1-axis Gyro on the RoboRIO SPI Port.
      */
@@ -176,11 +178,12 @@ public class DriveControl extends Subsystem {
      */
    public void updateDashboard() {
     	SmartDashboard.putNumber("Gyro Heading", getGyroAngle());
+       SmartDashboard.putNumber("Gyro PID Output", gyroPID.get());
 	   SmartDashboard.putNumber("Left PID Output", leftDrivePIDController);
 	   SmartDashboard.putNumber("Right PID Output", rightDrivePIDController);
 
    }
-   
+
    /**
     * Stop all drive motors.
     */
