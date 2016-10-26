@@ -113,7 +113,6 @@ public class AssistedDrive extends Command {
     		System.out.println("[TURN] Offset " + degreeOffset + " Drive(0, "
     				+ direction * speed + ")");
 
-    		Robot.driveControl.rawDrive(drivePower/3f, direction * speed);
     	} else {
     		// If on bearing, start timer and drive bot...
     		timer.start();
