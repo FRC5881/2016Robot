@@ -11,14 +11,10 @@
 
 package org.techvalleyhigh.frc5881.subsystems;
 
+import edu.wpi.first.wpilibj.*;
 import org.techvalleyhigh.frc5881.Robot;
 import org.techvalleyhigh.frc5881.RobotMap;
 import org.techvalleyhigh.frc5881.commands.*;
-
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.SpeedController;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -81,11 +77,14 @@ public class DriveControl extends Subsystem {
     private final SpeedController rightSpeedController2 = RobotMap.driveControlRightSpeedController2;
     private final RobotDrive robotDrive = RobotMap.driveControlRobotDrive;
 
+	private final PIDController gyroPID = new PIDController(7, 2, 0, RobotMap.driveControlDigitalGyro, null);
+
     /**
      * Object for access to the 2016 First Choice 1-axis Gyro on the RoboRIO SPI Port.
      */
     private ADXRS450_Gyro digitalGyro;
-    
+
+
     /**
      * Chooser for SmartDashboard to select teh autonomous drive speed.
      */
@@ -171,6 +170,7 @@ public class DriveControl extends Subsystem {
      */
    public void updateDashboard() {
     	SmartDashboard.putNumber("Gyro Heading", getGyroAngle());
+       SmartDashboard.putNumber("Gyro PID Output", gyroPID.get());
     }
    
    /**
