@@ -91,7 +91,12 @@ public class DriveControl extends Subsystem {
      */
     private SendableChooser autoSpeedChooser;
 
-    /**
+
+	private static final PIDController leftDrivePIDController = new PIDController(.2d, .02d, 0, RobotMap.driveControlLeftEncoder, null);
+	private static final PIDController rightDrivePIDController = new PIDController(.2d, .02d, 0, RobotMap.driveControlRightEncoder, null);
+
+
+	/**
      * Create the subsystem with a default name.
      */
     public DriveControl() {
@@ -171,7 +176,10 @@ public class DriveControl extends Subsystem {
      */
    public void updateDashboard() {
     	SmartDashboard.putNumber("Gyro Heading", getGyroAngle());
-    }
+	   SmartDashboard.putNumber("Left PID Output", leftDrivePIDController);
+	   SmartDashboard.putNumber("Right PID Output", rightDrivePIDController);
+
+   }
    
    /**
     * Stop all drive motors.
