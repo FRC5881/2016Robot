@@ -11,9 +11,7 @@
 
 package org.techvalleyhigh.frc5881.subsystems;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.RobotMap;
@@ -26,24 +24,20 @@ public class Arm extends Subsystem {
     /**
      * String used for SmartDashboard key for Spinner Eject Speed
      */
-    public static final String SPINNER_EJECT_SPEED = "Spinner Eject Speed";
+    private static final String SPINNER_EJECT_SPEED = "Spinner Eject Speed";
 
     /**
      * String used for SmartDashboard key for Spinner Intake Speed
      */
-    public static final String SPINNER_INTAKE_SPEED = "Spinner Intake Speed";
+    private static final String SPINNER_INTAKE_SPEED = "Spinner Intake Speed";
 
     /**
      * String used for SmartDashboard key for Articulation Speed
      */
-    public static final String ARTICULATION_SPEED = "Articulation Speed";
+    private static final String ARTICULATION_SPEED = "Articulation Speed";
 
-    private final SpeedController spinnerSpeedController = RobotMap.armSpinnerSpeedController;
-    private final DigitalInput armUpperLimitSwitch = RobotMap.armArmUpperLimitSwitch;
-    private final DigitalInput armLowerLimitSwitch = RobotMap.armArmLowerLimitSwitch;
-    private final SpeedController armSpeedController = RobotMap.armArmSpeedController;
-    private final Ultrasonic ultrasonicBallSensor = RobotMap.armUltrasonicBallSensor;
-    private final DigitalInput ballCaptureLimitSwitch = RobotMap.armBallCaptureLimitSwitch;
+    private static final SpeedController spinnerSpeedController = RobotMap.armSpinnerSpeedController;
+    private static final SpeedController armSpeedController = RobotMap.armArmSpeedController;
 
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
@@ -73,6 +67,7 @@ public class Arm extends Subsystem {
         SmartDashboard.putNumber(ARTICULATION_SPEED, 0.3);
     }
 
+    @Override
     public void initDefaultCommand() {
 
         // Set the default command for a subsystem here.

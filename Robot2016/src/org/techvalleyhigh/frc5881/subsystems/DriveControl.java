@@ -73,14 +73,13 @@ public class DriveControl extends Subsystem {
      * String used for SmartDashboard key for Joystick Y-Axis Deadzone
      */
     private static final String JOYSTICK_DEADZONE_Y = "Joystick Y-Axis Deadzone";
+
     private static final PIDController leftDrivePIDController = new PIDController(.2d, .02d, 0, RobotMap.driveControlLeftEncoder, null);
     private static final PIDController rightDrivePIDController = new PIDController(.2d, .02d, 0, RobotMap.driveControlRightEncoder, null);
-    private final SpeedController leftSpeedController1 = RobotMap.driveControlLeftSpeedController1;
-    private final SpeedController leftSpeedController2 = RobotMap.driveControlLeftSpeedController2;
-    private final SpeedController rightSpeedController1 = RobotMap.driveControlRightSpeedController1;
-    private final SpeedController rightSpeedController2 = RobotMap.driveControlRightSpeedController2;
-    private final RobotDrive robotDrive = RobotMap.driveControlRobotDrive;
-    private final PIDController gyroPID = new PIDController(7, 2, 0, RobotMap.driveControlDigitalGyro, null);
+    private static final PIDController gyroPID = new PIDController(7, 2, 0, RobotMap.driveControlDigitalGyro, null);
+
+    private static final RobotDrive robotDrive = RobotMap.driveControlRobotDrive;
+
     /**
      * Object for access to the 2016 First Choice 1-axis Gyro on the RoboRIO SPI Port.
      */
@@ -135,12 +134,9 @@ public class DriveControl extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
+    @Override
     public void initDefaultCommand() {
-
         setDefaultCommand(new Drive(10));
-
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
     }
 
     public void calibrateGyro() {
@@ -169,12 +165,11 @@ public class DriveControl extends Subsystem {
     /**
      * Update the SmartDashboard with current values.
      */
-    public void updateDashboard() {
+    private void updateDashboard() {
         SmartDashboard.putNumber("Gyro Heading", getGyroAngle());
         SmartDashboard.putNumber("Gyro PID Output", gyroPID.get());
         SmartDashboard.putNumber("Left PID Output", leftDrivePIDController.get());
         SmartDashboard.putNumber("Right PID Output", rightDrivePIDController.get());
-
     }
 
     /**
@@ -211,13 +206,13 @@ public class DriveControl extends Subsystem {
         double x = joystick.getX();
         double y = joystick.getY();
 
-        double deadzone_x = Math.abs(SmartDashboard.getNumber(JOYSTICK_DEADZONE_X, 0.1));
-        double deadzone_y = Math.abs(SmartDashboard.getNumber(JOYSTICK_DEADZONE_Y, 0.1));
+        double deadZoneX = Math.abs(SmartDashboard.getNumber(JOYSTICK_DEADZONE_X, 0.1));
+        double deadZoneY = Math.abs(SmartDashboard.getNumber(JOYSTICK_DEADZONE_Y, 0.1));
 
-        if (x < deadzone_x && x > (deadzone_x * -1)) {
+        if (x < deadZoneX && x > (deadZoneX * -1)) {
             x = 0;
         }
-        if (y < deadzone_y && y > (deadzone_y * -1)) {
+        if (y < deadZoneY && y > (deadZoneY * -1)) {
             y = 0;
         }
 
@@ -236,7 +231,7 @@ public class DriveControl extends Subsystem {
      *
      * @return Seconds to go 10' at full power.
      */
-    public double getFullPowerTime() {
+    private double getFullPowerTime() {
         return SmartDashboard.getNumber(FULL_POWER_TIME, 0.92);
     }
 
@@ -245,7 +240,7 @@ public class DriveControl extends Subsystem {
      *
      * @return Seconds to go 10' at half power.
      */
-    public double getHalfPowerTime() {
+    private double getHalfPowerTime() {
         return SmartDashboard.getNumber(HALF_POWER_TIME, 1.84);
     }
 
@@ -254,11 +249,11 @@ public class DriveControl extends Subsystem {
      *
      * @return Seconds to go 10' at 1/3rd power.
      */
-    public double getThirdPowerTime() {
+    private double getThirdPowerTime() {
         return SmartDashboard.getNumber(ONETHIRD_POWER_TIME, 2.76);
     }
 
-    public String getAutoSpeedSelection() {
+    private String getAutoSpeedSelection() {
         return (String) autoSpeedChooser.getSelected();
     }
 
@@ -267,15 +262,16 @@ public class DriveControl extends Subsystem {
      */
     public float getAutoSpeedValue() {
         String speed = getAutoSpeedSelection();
-        if (speed == FULL_SPEED_VALUE) {
-            return 1;
-        } else if (speed == HALF_SPEED_VALUE) {
-            return 0.5f;
-        } else if (speed == ONETHIRD_SPEED_VALUE) {
-            return 0.33333f;
-        } else {
-            System.out.println("Unknown autoSpeedSelection: " + speed);
-            return 1f;
+        switch (speed) {
+            case FULL_SPEED_VALUE:
+                return 1;
+            case HALF_SPEED_VALUE:
+                return 0.5f;
+            case ONETHIRD_SPEED_VALUE:
+                return 0.33333f;
+            default:
+                System.out.println("Unknown autoSpeedSelection: " + speed);
+                return 1f;
         }
     }
 
@@ -286,12 +282,13 @@ public class DriveControl extends Subsystem {
      */
     public double getAutoSetPowerTime() {
         String speed = getAutoSpeedSelection();
-        if (speed == FULL_SPEED_VALUE) {
-            return getFullPowerTime();
-        } else if (speed == HALF_SPEED_VALUE) {
-            return getHalfPowerTime();
-        } else if (speed == ONETHIRD_SPEED_VALUE) {
-            return getThirdPowerTime();
+        switch (speed) {
+            case FULL_SPEED_VALUE:
+                return getFullPowerTime();
+            case HALF_SPEED_VALUE:
+                return getHalfPowerTime();
+            case ONETHIRD_SPEED_VALUE:
+                return getThirdPowerTime();
         }
 
         return 1d;

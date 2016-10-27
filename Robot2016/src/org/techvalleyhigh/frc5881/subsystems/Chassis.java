@@ -11,10 +11,8 @@
 
 package org.techvalleyhigh.frc5881.subsystems;
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.techvalleyhigh.frc5881.RobotMap;
 import org.techvalleyhigh.frc5881.util.DynamicCameraServer;
 
 
@@ -26,19 +24,17 @@ public class Chassis extends Subsystem {
     /**
      * String used for SmartDashboard key for Forward Camera 1
      */
-    public final static String FORWARD_CAM_1 = "Forward Camera 1";
+    public static final String FORWARD_CAM_1 = "Forward Camera 1";
 
     /**
      * String used for SmartDashboard key for Forward Camera 2
      */
-    public final static String FORWARD_CAM_2 = "Forward Camera 2";
+    public static final String FORWARD_CAM_2 = "Forward Camera 2";
 
     /**
      * String used for SmartDashboard key for Reverse Camera
      */
-    public final static String REVERSE_CAM = "Reverse Camera";
-
-    private final PowerDistributionPanel powerDistributionPanel = RobotMap.chassisPowerDistributionPanel;
+    public static final String REVERSE_CAM = "Reverse Camera";
 
     /**
      * Boolean status of chassis inversion.
@@ -85,6 +81,7 @@ public class Chassis extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
+    @Override
     public void initDefaultCommand() {
 
         // Set the default command for a subsystem here.
