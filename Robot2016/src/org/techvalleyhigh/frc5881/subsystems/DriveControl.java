@@ -13,6 +13,7 @@ package org.techvalleyhigh.frc5881.subsystems;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -171,8 +172,8 @@ public class DriveControl extends Subsystem {
     public void updateDashboard() {
         SmartDashboard.putNumber("Gyro Heading", getGyroAngle());
         SmartDashboard.putNumber("Gyro PID Output", gyroPID.get());
-        SmartDashboard.putNumber("Left PID Output", leftDrivePIDController);
-        SmartDashboard.putNumber("Right PID Output", rightDrivePIDController);
+        SmartDashboard.putNumber("Left PID Output", leftDrivePIDController.get());
+        SmartDashboard.putNumber("Right PID Output", rightDrivePIDController.get());
 
     }
 
