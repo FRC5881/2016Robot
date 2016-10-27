@@ -13,7 +13,6 @@ package org.techvalleyhigh.frc5881.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.techvalleyhigh.frc5881.Robot;
 import org.techvalleyhigh.frc5881.subsystems.Chassis;
 
@@ -37,7 +36,7 @@ public class ReverseOrientation extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.chassis.setOrientationAndVideo(true, SmartDashboard.getString(Chassis.REVERSE_CAM));
+        Robot.chassis.setOrientationAndVideo(true, SmartDashboard.getString(Chassis.REVERSE_CAM));
     }
 
     // Make this return true when this Command no longer needs to run execute()

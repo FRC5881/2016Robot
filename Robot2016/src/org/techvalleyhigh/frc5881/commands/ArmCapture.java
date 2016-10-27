@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.Robot;
 
 /**
- * Arm capture spins the boulder mechanism to take in a boulder. 
+ * Arm capture spins the boulder mechanism to take in a boulder.
  */
 public class ArmCapture extends Command {
 
@@ -29,7 +29,7 @@ public class ArmCapture extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.arm.spinIntake();
+        Robot.arm.spinIntake();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -39,12 +39,12 @@ public class ArmCapture extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.arm.spinStop();
+        Robot.arm.spinStop();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
+        end();
     }
 }

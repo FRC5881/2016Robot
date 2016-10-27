@@ -13,7 +13,6 @@ package org.techvalleyhigh.frc5881.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.techvalleyhigh.frc5881.Robot;
 import org.techvalleyhigh.frc5881.subsystems.Chassis;
 
@@ -25,7 +24,7 @@ public class ForwardCam1 extends Command {
     public ForwardCam1() {
 
         requires(Robot.chassis);
-        
+
         // Enables this command to run when the robot is disabled.
         // USE WITH CAUTION
         setRunWhenDisabled(true);
@@ -37,7 +36,7 @@ public class ForwardCam1 extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.chassis.setOrientationAndVideo(false, SmartDashboard.getString(Chassis.FORWARD_CAM_1));
+        Robot.chassis.setOrientationAndVideo(false, SmartDashboard.getString(Chassis.FORWARD_CAM_1));
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -13,14 +13,13 @@ package org.techvalleyhigh.frc5881.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.Robot;
-import org.techvalleyhigh.frc5881.util.ClockTimer;
 
 /**
  *
  */
 public class AutonomousArmClose extends Command {
 
-	private static double ARM_CLOSE_TIME = 0.25;
+    private static double ARM_CLOSE_TIME = 0.25;
 
     public AutonomousArmClose() {
 
@@ -30,12 +29,12 @@ public class AutonomousArmClose extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	setTimeout(ARM_CLOSE_TIME);
+        setTimeout(ARM_CLOSE_TIME);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.arm.articulateDown();
+        Robot.arm.articulateDown();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -45,12 +44,12 @@ public class AutonomousArmClose extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.arm.articulateStop();
+        Robot.arm.articulateStop();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
+        end();
     }
 }

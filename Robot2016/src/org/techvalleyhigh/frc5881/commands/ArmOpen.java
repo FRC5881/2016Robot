@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.techvalleyhigh.frc5881.Robot;
 
 /**
- * Opens or raises the articulating arm up and or away from the front of the robot. 
+ * Opens or raises the articulating arm up and or away from the front of the robot.
  */
 public class ArmOpen extends Command {
 
@@ -31,7 +31,7 @@ public class ArmOpen extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.arm.articulateUp();
+        Robot.arm.articulateUp();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -41,12 +41,12 @@ public class ArmOpen extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.arm.articulateStop();
+        Robot.arm.articulateStop();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
+        end();
     }
 }

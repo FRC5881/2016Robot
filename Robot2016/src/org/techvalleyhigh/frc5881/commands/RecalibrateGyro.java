@@ -12,10 +12,7 @@
 package org.techvalleyhigh.frc5881.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.techvalleyhigh.frc5881.Robot;
-import org.techvalleyhigh.frc5881.subsystems.Chassis;
 
 /**
  *
@@ -25,7 +22,7 @@ public class RecalibrateGyro extends Command {
     public RecalibrateGyro() {
 
         requires(Robot.driveControl);
-        
+
         // Enables this command to run when the robot is disabled.
         // USE WITH CAUTION
         setRunWhenDisabled(true);
@@ -37,7 +34,7 @@ public class RecalibrateGyro extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.driveControl.calibrateGyro();
+        Robot.driveControl.calibrateGyro();
     }
 
     // Make this return true when this Command no longer needs to run execute()

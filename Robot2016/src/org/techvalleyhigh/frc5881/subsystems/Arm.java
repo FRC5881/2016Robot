@@ -11,36 +11,32 @@
 
 package org.techvalleyhigh.frc5881.subsystems;
 
-import org.techvalleyhigh.frc5881.RobotMap;
-import org.techvalleyhigh.frc5881.commands.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Ultrasonic;
-
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.techvalleyhigh.frc5881.RobotMap;
 
 
 /**
  *
  */
 public class Arm extends Subsystem {
-	/**
-	 * String used for SmartDashboard key for Spinner Eject Speed
-	 */
-	public static final String SPINNER_EJECT_SPEED = "Spinner Eject Speed";
-	
-	/**
-	 * String used for SmartDashboard key for Spinner Intake Speed
-	 */
-	public static final String SPINNER_INTAKE_SPEED = "Spinner Intake Speed";
-	
-	/**
-	 * String used for SmartDashboard key for Articulation Speed
-	 */
-	public static final String ARTICULATION_SPEED = "Articulation Speed";
+    /**
+     * String used for SmartDashboard key for Spinner Eject Speed
+     */
+    public static final String SPINNER_EJECT_SPEED = "Spinner Eject Speed";
+
+    /**
+     * String used for SmartDashboard key for Spinner Intake Speed
+     */
+    public static final String SPINNER_INTAKE_SPEED = "Spinner Intake Speed";
+
+    /**
+     * String used for SmartDashboard key for Articulation Speed
+     */
+    public static final String ARTICULATION_SPEED = "Articulation Speed";
 
     private final SpeedController spinnerSpeedController = RobotMap.armSpinnerSpeedController;
     private final DigitalInput armUpperLimitSwitch = RobotMap.armArmUpperLimitSwitch;
@@ -56,47 +52,47 @@ public class Arm extends Subsystem {
      * Create the subsystem with a default name.
      */
     public Arm() {
-		super();
-		initSmartDashboard();
-	}
-    
+        super();
+        initSmartDashboard();
+    }
+
     /**
      * Create the subsystem with the given name.
      */
     public Arm(String name) {
-    	super(name);
-    	initSmartDashboard();
+        super(name);
+        initSmartDashboard();
     }
-    
+
     /**
      * Initialize the SmartDashboard values.
      */
     private void initSmartDashboard() {
-    	SmartDashboard.putNumber(SPINNER_EJECT_SPEED, 0.5);
-    	SmartDashboard.putNumber(SPINNER_INTAKE_SPEED, 0.3);
-    	SmartDashboard.putNumber(ARTICULATION_SPEED, 0.3);
+        SmartDashboard.putNumber(SPINNER_EJECT_SPEED, 0.5);
+        SmartDashboard.putNumber(SPINNER_INTAKE_SPEED, 0.3);
+        SmartDashboard.putNumber(ARTICULATION_SPEED, 0.3);
     }
-    
+
     public void initDefaultCommand() {
 
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
     }
-    
+
     /**
      * Commands the spinner to intake a ball, spinning at the motor value from the SmartDashboard.
      * Care is taken to make sure, no matter the value entered, it spins in a "+" direction.
      */
     public void spinIntake() {
-    	double value = SmartDashboard.getNumber(SPINNER_INTAKE_SPEED, 0.3);
-    	spinnerSpeedController.set(value < 0 ? value * -1 : value);
+        double value = SmartDashboard.getNumber(SPINNER_INTAKE_SPEED, 0.3);
+        spinnerSpeedController.set(value < 0 ? value * -1 : value);
     }
-    
+
     /**
      * Commands the spinner to stop.
      */
     public void spinStop() {
-    	spinnerSpeedController.set(0);
+        spinnerSpeedController.set(0);
     }
 
     /**
@@ -104,25 +100,25 @@ public class Arm extends Subsystem {
      * Care is taken to make sure, no matter the value entered, it spins in a "-" direction.
      */
     public void spinEject() {
-    	double value = SmartDashboard.getNumber(SPINNER_EJECT_SPEED, 0.5);
-    	spinnerSpeedController.set(value > 0 ? value * -1 : value);
+        double value = SmartDashboard.getNumber(SPINNER_EJECT_SPEED, 0.5);
+        spinnerSpeedController.set(value > 0 ? value * -1 : value);
     }
-    
+
     /**
      * Commands the articulation motor to lower the arm, spinning at the motor value from the
      * SmartDashboard. In this context "down" is considered toward the intake front of the robot
      * when the arm is in a position perpendicular to the floor in a nominal state.
      */
     public void articulateDown() {
-    	double value = SmartDashboard.getNumber(ARTICULATION_SPEED, 0.3);
-    	armSpeedController.set(value > 0 ? value * -1 : value);
+        double value = SmartDashboard.getNumber(ARTICULATION_SPEED, 0.3);
+        armSpeedController.set(value > 0 ? value * -1 : value);
     }
-    
+
     /**
      * Commands the articulation motor to stop.
      */
     public void articulateStop() {
-    	armSpeedController.set(0);
+        armSpeedController.set(0);
     }
 
     /**
@@ -131,8 +127,8 @@ public class Arm extends Subsystem {
      * when the arm is in a position perpendicular to the floor in a nominal state.
      */
     public void articulateUp() {
-    	double value = SmartDashboard.getNumber(ARTICULATION_SPEED, 0.3);
-    	armSpeedController.set(value < 0 ? value * -1 : value);
+        double value = SmartDashboard.getNumber(ARTICULATION_SPEED, 0.3);
+        armSpeedController.set(value < 0 ? value * -1 : value);
     }
 }
 
