@@ -89,7 +89,9 @@ public class RobotMap {
 
         //pulse per rotation = 1440, Circumference = 18.84954
         driveControlLeftEncoder.setDistancePerPulse(1440/18.84954d);
+        LiveWindow.addSensor("Drive Control", "Left Encoder", driveControlLeftEncoder);
         driveControlRightEncoder.setDistancePerPulse(1440/18.84954d);
+        LiveWindow.addSensor("Drive Control", "Right Encoder", driveControlRightEncoder);
 
         driveControlDigitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
         LiveWindow.addSensor("Drive Control", "DigitalGyro", driveControlDigitalGyro);
