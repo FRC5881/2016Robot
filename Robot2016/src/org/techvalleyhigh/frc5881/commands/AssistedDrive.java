@@ -11,164 +11,126 @@
 
 package org.techvalleyhigh.frc5881.commands;
 
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.techvalleyhigh.frc5881.Robot;
-import org.techvalleyhigh.frc5881.util.ClockTimer;
+import org.techvalleyhigh.frc5881.RobotMap;
+import org.techvalleyhigh.frc5881.subsystems.DriveControl;
 
 /**
  * Responsible for autonomous driving given a distance and direction to drive in.
  */
 public class AssistedDrive extends Command {
 
-    private double m_distanceInFeet;
-    private double m_relativeBearing;
+    private double distanceInFeet;
+    private double relativeBearing;
+
+    private DriveControl driveControl;
+
+    private PIDController leftDrivePIDController;
+    private PIDController rightDrivePIDController;
 
     /**
-     * Absolute bearing of travel. Ideally should be equal to the gyro output
-     * for the duration of travel.
+     * gyrpPID outputs a value that needs to be applied to the power of drive motors to adjust heading
+     * -1 * output to left and output to right
      */
-    private double absBearing;
+    private PIDController gyroPID;
 
-    /**
-     * Variance from absolute bearing (in degrees) that will not be adjusted for
-     * during travel.
-     */
-    private int gyroTolerance;
-
-    /**
-     * Total drive time, in seconds, needed to travel in the direction of the
-     * absolute bearing to reach the destination.
-     */
-    private double totalDriveTimeNeeded;
-
-    /**
-     * Motor power 0 to 1 to drive at.
-     */
-    private float drivePower;
-
-    /**
-     * Timer to monitor the amount of time traveling.
-     */
-    private ClockTimer timer;
+    private double leftDrivePIDOutput = 0;
+    private double rightDrivePIDOutput = 0;
+    private double gyroPIDOutput = 0;
 
     public AssistedDrive(double distanceInFeet, double relativeBearing) {
 
-        m_distanceInFeet = distanceInFeet;
-        m_relativeBearing = relativeBearing;
+        this.distanceInFeet = distanceInFeet;
+        this.relativeBearing = relativeBearing;
 
         requires(Robot.driveControl);
-
+        driveControl = Robot.driveControl;
     }
 
     // Called just before this Command runs the first time
+    @Override
     protected void initialize() {
         // Set the absolute bearing based on the relative bearing of travel added to the
         // current actual heading of the robot.
-        absBearing = Robot.driveControl.getGyroAngle() + m_relativeBearing;
+        double absBearing = Robot.driveControl.getGyroAngle() + relativeBearing;
 
-        // Sets the tolerance from the DriveControl subsystem
-        gyroTolerance = Robot.driveControl.getAutoGyroTolerance();
+        leftDrivePIDController = new PIDController(driveControl.getLeftPIDKp(), driveControl.getLeftPIDKi(),
+                driveControl.getLeftPIDKd(), RobotMap.driveControlLeftEncoder,
+                output -> leftDrivePIDOutput = output);
+        rightDrivePIDController = new PIDController(driveControl.getRightPIDKp(), driveControl.getRightPIDKi(),
+                driveControl.getRightPIDKd(), RobotMap.driveControlRightEncoder,
+                output -> rightDrivePIDOutput = output);
 
-        setTravelTime();
+        // Power setting from SmartDashboard
+        double drivePower = Robot.driveControl.getAutoSpeedValue();
 
-        // Sets the drive power/speed from the DriveControl subsystem
-        drivePower = Robot.driveControl.getAutoSpeedValue();
+        // Limit the PID output range to valid motor control values
+        leftDrivePIDController.setOutputRange(-1 * drivePower, drivePower);
+        rightDrivePIDController.setOutputRange(-1 * drivePower, drivePower);
+
+        // Set the distance to travel in inches
+        leftDrivePIDController.setSetpoint(12 * distanceInFeet);
+        rightDrivePIDController.setSetpoint(12 * distanceInFeet);
+
+        // Set a 3" tolerance
+        leftDrivePIDController.setAbsoluteTolerance(3);
+        rightDrivePIDController.setAbsoluteTolerance(3);
+
+        gyroPID = new PIDController(driveControl.getGyroPIDKp(), driveControl.getGyroPIDKi(),
+                driveControl.getGyroPIDKd(), RobotMap.driveControlDigitalGyro, output -> gyroPIDOutput = output);
+
+        // Limit the gyro output to a small number used to simulate a turn on the joystick.
+        gyroPID.setOutputRange(-.2, .2);
+
+        // Set the angle to keep at in degrees
+        gyroPID.setSetpoint(absBearing);
+
+        // Apply the dashboard tolerance
+        gyroPID.setAbsoluteTolerance(Robot.driveControl.getAutoGyroTolerance());
+
+        leftDrivePIDController.enable();
+        rightDrivePIDController.enable();
+        gyroPID.enable();
 
         // Debugging output very helpful. DS needs a console setting change to see it.
-        System.out.println("Assisted Drive Leg - " + m_distanceInFeet + "ft == "
-                + totalDriveTimeNeeded + "sec at power " + drivePower
-                + " bearing " + m_relativeBearing + " rel deg " + absBearing
-                + " abs deg +-" + gyroTolerance);
-
-        // Create a timer to track the drive time needed.
-        timer = new ClockTimer(totalDriveTimeNeeded);
+        System.out.println("Assisted Drive Leg - " + distanceInFeet + "ft at power " + drivePower
+                + " bearing " + relativeBearing + " rel deg " + absBearing);
     }
 
     // Called repeatedly when this Command is scheduled to run
+    @Override
     protected void execute() {
-        if (!isAngleInTolerance()) {
-            // If bearing off... stop timer and turn robot...
+        driveControl.rawDrive((leftDrivePIDOutput + rightDrivePIDOutput) / 2, gyroPIDOutput);
 
-            timer.stop();
+        SmartDashboard.putNumber("Gyro PID Output", gyroPIDOutput);
+        SmartDashboard.putNumber("Left PID Output", leftDrivePIDOutput);
+        SmartDashboard.putNumber("Right PID Output", rightDrivePIDOutput);
 
-            double degreeOffset = degreeOffsetToMatchBearing();
-
-            // If the offset from the desired bearing is negative, change the turn direction
-            float direction = -1;
-            if (Math.abs(degreeOffset) != degreeOffset) {
-                direction = 1;
-            }
-
-            // These probably should be in the SmartDashboard for now but, depending on the
-            // amount of turn needed, set larger or smaller speeds.
-            float speed = .8f;
-            if (Math.abs(degreeOffset) > 90) {
-                speed = .8f;
-            } else if (Math.abs(degreeOffset) > 45) {
-                speed = .7f;
-            } else {
-                speed = .6f;
-            }
-
-            System.out.println("[TURN] Offset " + degreeOffset + " Drive(0, "
-                    + direction * speed + ")");
-
-            Robot.driveControl.rawDrive(drivePower / 3f, direction * speed);
-        } else {
-            // If on bearing, start timer and drive bot...
-            timer.start();
-
-            Robot.driveControl.rawDrive(drivePower, 0f);
-        }
     }
 
     // Make this return true when this Command no longer needs to run execute()
+    @Override
     protected boolean isFinished() {
-        return timer.isExpired();
+        return leftDrivePIDController.onTarget() || rightDrivePIDController.onTarget();
     }
 
     // Called once after isFinished returns true
+    @Override
     protected void end() {
-        timer.stop();
+        leftDrivePIDController.disable();
+        rightDrivePIDController.disable();
+        gyroPID.disable();
+
         Robot.driveControl.stopDrive();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
+    @Override
     protected void interrupted() {
         end();
-    }
-
-    /**
-     * Tests to see if the current gyro angle is within the tolerances specified on the
-     * SmartDashboard at the beginning of the command.
-     *
-     * @return true if the tolerance hasn't been exceeded
-     */
-    private boolean isAngleInTolerance() {
-        double currentAngle = Robot.driveControl.getGyroAngle();
-        if (absBearing >= currentAngle - gyroTolerance && absBearing <= currentAngle + gyroTolerance) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Determines degrees to turn to match the desired bearing.
-     *
-     * @return number of degrees to turn, with positive numbers being clockwise.
-     */
-    private double degreeOffsetToMatchBearing() {
-        double currentAngle = Robot.driveControl.getGyroAngle();
-        return absBearing - currentAngle;
-    }
-
-    /**
-     * Sets the travel time for the given distance.
-     */
-    private void setTravelTime() {
-        double tenFootTravelTime = Robot.driveControl.getAutoSetPowerTime();
-        totalDriveTimeNeeded = (tenFootTravelTime / 10) * m_distanceInFeet;
     }
 }

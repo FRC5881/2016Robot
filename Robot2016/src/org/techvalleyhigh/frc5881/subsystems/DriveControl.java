@@ -35,9 +35,9 @@ public class DriveControl extends Subsystem {
     private static final String AUTO_GYRO_TOLERANCE = "Auto Gyro Tolerance (+- Deg)";
 
     /**
-     * String used for SmartDashboard key for Full Power 10' Time
+     * Default value for Auto Gyro Tolerance
      */
-    private static final String FULL_POWER_TIME = "Full Power 10' Time";
+    private static final double AUTO_GYRO_TOLERANCE_DEFAULT = 2;
 
     /**
      * String used for SmartDashboard value for Full Speed
@@ -45,19 +45,9 @@ public class DriveControl extends Subsystem {
     private static final String FULL_SPEED_VALUE = "FULL";
 
     /**
-     * String used for SmartDashboard key for Half Power 10' Time
-     */
-    private static final String HALF_POWER_TIME = "Half Power 10' Time";
-
-    /**
      * String used for SmartDashboard value for Half Speed
      */
     private static final String HALF_SPEED_VALUE = "HALF";
-
-    /**
-     * String used for SmartDashboard key for One-Third Power 10' Time
-     */
-    private static final String ONETHIRD_POWER_TIME = "One-Third Power 10' Time";
 
     /**
      * String used for SmartDashboard value for 1/3rd Speed
@@ -70,13 +60,40 @@ public class DriveControl extends Subsystem {
     private static final String JOYSTICK_DEADZONE_X = "Joystick X-Axis Deadzone";
 
     /**
+     * Default value for Joystick X-Axis Deadzone
+     */
+    private static final double JOYSTICK_DEADZONE_X_DEFAULT = 0.1;
+
+    /**
      * String used for SmartDashboard key for Joystick Y-Axis Deadzone
      */
     private static final String JOYSTICK_DEADZONE_Y = "Joystick Y-Axis Deadzone";
 
-    private static final PIDController leftDrivePIDController = new PIDController(.2d, .02d, 0, RobotMap.driveControlLeftEncoder, null);
-    private static final PIDController rightDrivePIDController = new PIDController(.2d, .02d, 0, RobotMap.driveControlRightEncoder, null);
-    private static final PIDController gyroPID = new PIDController(7, 2, 0, RobotMap.driveControlDigitalGyro, null);
+    /**
+     * Default value for Joystick Y-Axis Deadzone
+     */
+    private static final double JOYSTICK_DEADZONE_Y_DEFAULT = 0.1;
+
+    private static final String LEFT_DRIVE_PID_KP = "Left Drive PID Kp";
+    private static final double LEFT_DRIVE_PID_KP_DEFAULT = 0.2;
+    private static final String LEFT_DRIVE_PID_KI = "Left Drive PID Ki";
+    private static final double LEFT_DRIVE_PID_KI_DEFAULT = 0;
+    private static final String LEFT_DRIVE_PID_KD = "Left Drive PID Kd";
+    private static final double LEFT_DRIVE_PID_KD_DEFAULT = 0.02;
+
+    private static final String RIGHT_DRIVE_PID_KP = "Left Drive PID Kp";
+    private static final double RIGHT_DRIVE_PID_KP_DEFAULT = 0.2;
+    private static final String RIGHT_DRIVE_PID_KI = "Left Drive PID Ki";
+    private static final double RIGHT_DRIVE_PID_KI_DEFAULT = 0;
+    private static final String RIGHT_DRIVE_PID_KD = "Left Drive PID Kd";
+    private static final double RIGHT_DRIVE_PID_KD_DEFAULT = 0.02;
+
+    private static final String GYRO_PID_KP = "Gyro PID Kp";
+    private static final double GYRO_PID_KP_DEFAULT = 7;
+    private static final String GYRO_PID_KI = "Gyro PID Ki";
+    private static final double GYRO_PID_KI_DEFAULT = 0;
+    private static final String GYRO_PID_KD = "Gyro PID Kd";
+    private static final double GYRO_PID_KD_DEFAULT = 1;
 
     private static final RobotDrive robotDrive = RobotMap.driveControlRobotDrive;
 
@@ -99,27 +116,13 @@ public class DriveControl extends Subsystem {
     }
 
     /**
-     * Create the subsystem with the given name.
-     */
-    public DriveControl(String name) {
-        super(name);
-        initSmartDashboard();
-    }
-
-    /**
      * Initialize the SmartDashboard values.
      */
     private void initSmartDashboard() {
         calibrateGyro();
 
-        // Timing settings. These are timed numbers measured as the amount of time it takes
-        // the robot to move 10' at the given power level.
-        SmartDashboard.putNumber(FULL_POWER_TIME, 1.1);
-        SmartDashboard.putNumber(HALF_POWER_TIME, 2.2);
-        SmartDashboard.putNumber(ONETHIRD_POWER_TIME, 3.3);
-
         // Gryo tolerance - used in auto to provide non-perfect directions
-        SmartDashboard.putNumber(AUTO_GYRO_TOLERANCE, 5);
+        SmartDashboard.putNumber(AUTO_GYRO_TOLERANCE, AUTO_GYRO_TOLERANCE_DEFAULT);
 
         autoSpeedChooser = new SendableChooser();
         autoSpeedChooser.addDefault("Full Speed", FULL_SPEED_VALUE);
@@ -127,8 +130,20 @@ public class DriveControl extends Subsystem {
         autoSpeedChooser.addObject("1/3rd Speed", ONETHIRD_SPEED_VALUE);
         SmartDashboard.putData("Autonomous Speed Selection", autoSpeedChooser);
 
-        SmartDashboard.putNumber(JOYSTICK_DEADZONE_X, 0.1);
-        SmartDashboard.putNumber(JOYSTICK_DEADZONE_Y, 0.1);
+        SmartDashboard.putNumber(JOYSTICK_DEADZONE_X, JOYSTICK_DEADZONE_X_DEFAULT);
+        SmartDashboard.putNumber(JOYSTICK_DEADZONE_Y, JOYSTICK_DEADZONE_Y_DEFAULT);
+
+        SmartDashboard.putNumber(LEFT_DRIVE_PID_KP, LEFT_DRIVE_PID_KP_DEFAULT);
+        SmartDashboard.putNumber(LEFT_DRIVE_PID_KI, LEFT_DRIVE_PID_KI_DEFAULT);
+        SmartDashboard.putNumber(LEFT_DRIVE_PID_KD, LEFT_DRIVE_PID_KD_DEFAULT);
+
+        SmartDashboard.putNumber(RIGHT_DRIVE_PID_KP, RIGHT_DRIVE_PID_KP_DEFAULT);
+        SmartDashboard.putNumber(RIGHT_DRIVE_PID_KI, RIGHT_DRIVE_PID_KI_DEFAULT);
+        SmartDashboard.putNumber(RIGHT_DRIVE_PID_KD, RIGHT_DRIVE_PID_KD_DEFAULT);
+
+        SmartDashboard.putNumber(GYRO_PID_KP, GYRO_PID_KP_DEFAULT);
+        SmartDashboard.putNumber(GYRO_PID_KI, GYRO_PID_KI_DEFAULT);
+        SmartDashboard.putNumber(GYRO_PID_KD, GYRO_PID_KD_DEFAULT);
     }
 
     // Put methods for controlling this subsystem
@@ -159,7 +174,7 @@ public class DriveControl extends Subsystem {
      * @return Number of degrees of tolerance +-
      */
     public int getAutoGyroTolerance() {
-        return (int) SmartDashboard.getNumber(AUTO_GYRO_TOLERANCE, 5);
+        return (int) SmartDashboard.getNumber(AUTO_GYRO_TOLERANCE, AUTO_GYRO_TOLERANCE_DEFAULT);
     }
 
     /**
@@ -167,9 +182,6 @@ public class DriveControl extends Subsystem {
      */
     private void updateDashboard() {
         SmartDashboard.putNumber("Gyro Heading", getGyroAngle());
-        SmartDashboard.putNumber("Gyro PID Output", gyroPID.get());
-        SmartDashboard.putNumber("Left PID Output", leftDrivePIDController.get());
-        SmartDashboard.putNumber("Right PID Output", rightDrivePIDController.get());
     }
 
     /**
@@ -186,7 +198,7 @@ public class DriveControl extends Subsystem {
      * @param move Motor amount to move from -1 to 1
      * @param turn Motor amount to turn from -1 to 1
      */
-    public void rawDrive(float move, float turn) {
+    public void rawDrive(double move, double turn) {
         updateDashboard();
         robotDrive.arcadeDrive(move, turn, true);
     }
@@ -198,16 +210,18 @@ public class DriveControl extends Subsystem {
      * @param scale Scaling factor to apply, must be a while number of at least 2.
      */
     public void takeJoystickInputs(int scale) {
-        if (scale < 2) {
-            scale = 2;
+        int scaleFactor = scale;
+
+        if (scaleFactor < 2) {
+            scaleFactor = 2;
         }
 
         Joystick joystick = Robot.oi.getJoystick();
         double x = joystick.getX();
         double y = joystick.getY();
 
-        double deadZoneX = Math.abs(SmartDashboard.getNumber(JOYSTICK_DEADZONE_X, 0.1));
-        double deadZoneY = Math.abs(SmartDashboard.getNumber(JOYSTICK_DEADZONE_Y, 0.1));
+        double deadZoneX = Math.abs(SmartDashboard.getNumber(JOYSTICK_DEADZONE_X, JOYSTICK_DEADZONE_X_DEFAULT));
+        double deadZoneY = Math.abs(SmartDashboard.getNumber(JOYSTICK_DEADZONE_Y, JOYSTICK_DEADZONE_Y_DEFAULT));
 
         if (x < deadZoneX && x > (deadZoneX * -1)) {
             x = 0;
@@ -221,40 +235,49 @@ public class DriveControl extends Subsystem {
             y = -1 * y;
         }
 
-        Position scaled = scaleAxis(x, y, scale);
+        Position scaled = scaleAxis(x, y, scaleFactor);
 
         robotDrive.arcadeDrive(-1 * scaled.y, -3 * scaled.x / 4, true);
     }
 
-    /**
-     * Gets the amount of time the robot takes to go 10' at full power in seconds.
-     *
-     * @return Seconds to go 10' at full power.
-     */
-    private double getFullPowerTime() {
-        return SmartDashboard.getNumber(FULL_POWER_TIME, 0.92);
-    }
-
-    /**
-     * Gets the amount of time the robot takes to go 10' at half power in seconds.
-     *
-     * @return Seconds to go 10' at half power.
-     */
-    private double getHalfPowerTime() {
-        return SmartDashboard.getNumber(HALF_POWER_TIME, 1.84);
-    }
-
-    /**
-     * Gets the amount of time the robot takes to go 10' at 1/3rd power in seconds.
-     *
-     * @return Seconds to go 10' at 1/3rd power.
-     */
-    private double getThirdPowerTime() {
-        return SmartDashboard.getNumber(ONETHIRD_POWER_TIME, 2.76);
-    }
-
     private String getAutoSpeedSelection() {
         return (String) autoSpeedChooser.getSelected();
+    }
+
+    public double getLeftPIDKp() {
+        return SmartDashboard.getNumber(LEFT_DRIVE_PID_KP, LEFT_DRIVE_PID_KP_DEFAULT);
+    }
+
+    public double getLeftPIDKi() {
+        return SmartDashboard.getNumber(LEFT_DRIVE_PID_KI, LEFT_DRIVE_PID_KI_DEFAULT);
+    }
+
+    public double getLeftPIDKd() {
+        return SmartDashboard.getNumber(LEFT_DRIVE_PID_KD, LEFT_DRIVE_PID_KD_DEFAULT);
+    }
+
+    public double getRightPIDKp() {
+        return SmartDashboard.getNumber(RIGHT_DRIVE_PID_KP, RIGHT_DRIVE_PID_KP_DEFAULT);
+    }
+
+    public double getRightPIDKi() {
+        return SmartDashboard.getNumber(RIGHT_DRIVE_PID_KI, RIGHT_DRIVE_PID_KI_DEFAULT);
+    }
+
+    public double getRightPIDKd() {
+        return SmartDashboard.getNumber(RIGHT_DRIVE_PID_KD, RIGHT_DRIVE_PID_KD_DEFAULT);
+    }
+
+    public double getGyroPIDKp() {
+        return SmartDashboard.getNumber(GYRO_PID_KP, GYRO_PID_KP_DEFAULT);
+    }
+
+    public double getGyroPIDKi() {
+        return SmartDashboard.getNumber(GYRO_PID_KI, GYRO_PID_KI_DEFAULT);
+    }
+
+    public double getGyroPIDKd() {
+        return SmartDashboard.getNumber(GYRO_PID_KD, GYRO_PID_KD_DEFAULT);
     }
 
     /**
@@ -273,25 +296,6 @@ public class DriveControl extends Subsystem {
                 System.out.println("Unknown autoSpeedSelection: " + speed);
                 return 1f;
         }
-    }
-
-    /**
-     * Gets the amount of time to go 10' at the selected power level.
-     *
-     * @return double seconds to tavel 10' at chosen speed
-     */
-    public double getAutoSetPowerTime() {
-        String speed = getAutoSpeedSelection();
-        switch (speed) {
-            case FULL_SPEED_VALUE:
-                return getFullPowerTime();
-            case HALF_SPEED_VALUE:
-                return getHalfPowerTime();
-            case ONETHIRD_SPEED_VALUE:
-                return getThirdPowerTime();
-        }
-
-        return 1d;
     }
 
     /**
