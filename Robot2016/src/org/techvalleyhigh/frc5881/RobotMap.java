@@ -34,11 +34,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class RobotMap {
     public static SpeedController armSpinnerSpeedController;
-    public static DigitalInput armArmUpperLimitSwitch;
-    public static DigitalInput armArmLowerLimitSwitch;
     public static SpeedController armArmSpeedController;
-    public static Ultrasonic armUltrasonicBallSensor;
-    public static DigitalInput armBallCaptureLimitSwitch;
     public static SpeedController driveControlLeftSpeedController1;
     public static SpeedController driveControlLeftSpeedController2;
     public static SpeedController driveControlRightSpeedController1;
@@ -55,20 +51,8 @@ public class RobotMap {
         armSpinnerSpeedController = new Talon(4);
         LiveWindow.addActuator("Arm", "Spinner Speed Controller", (Talon) armSpinnerSpeedController);
 
-        armArmUpperLimitSwitch = new DigitalInput(2);
-        LiveWindow.addSensor("Arm", "Arm Upper Limit Switch", armArmUpperLimitSwitch);
-
-        armArmLowerLimitSwitch = new DigitalInput(3);
-        LiveWindow.addSensor("Arm", "Arm Lower Limit Switch", armArmLowerLimitSwitch);
-
         armArmSpeedController = new Talon(5);
         LiveWindow.addActuator("Arm", "Arm Speed Controller", (Talon) armArmSpeedController);
-
-        armUltrasonicBallSensor = new Ultrasonic(0, 1);
-        LiveWindow.addSensor("Arm", "Ultrasonic Ball Sensor", armUltrasonicBallSensor);
-
-        armBallCaptureLimitSwitch = new DigitalInput(4);
-        LiveWindow.addSensor("Arm", "Ball Capture Limit Switch", armBallCaptureLimitSwitch);
 
         driveControlLeftSpeedController1 = new Victor(0);
         LiveWindow.addActuator("Drive Control", "Left Speed Controller 1", (Victor) driveControlLeftSpeedController1);
@@ -97,9 +81,9 @@ public class RobotMap {
         driveControlRightEncoder = new Encoder(2, 3);
 
         //pulse per rotation = 1440, Circumference = 18.84954
-        driveControlLeftEncoder.setDistancePerPulse(18.84954d / 1440);
+        driveControlLeftEncoder.setDistancePerPulse((18.84954d / 1440d)*4);
         LiveWindow.addSensor("Drive Control", "Left Encoder", driveControlLeftEncoder);
-        driveControlRightEncoder.setDistancePerPulse(18.84954d / 1440);
+        driveControlRightEncoder.setDistancePerPulse((18.84954d / 1440d)*4);
         LiveWindow.addSensor("Drive Control", "Right Encoder", driveControlRightEncoder);
 
         driveControlDigitalGyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);

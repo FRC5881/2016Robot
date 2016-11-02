@@ -50,9 +50,9 @@ public class DriveControl extends Subsystem {
     private static final String HALF_SPEED_VALUE = "HALF";
 
     /**
-     * String used for SmartDashboard value for 1/3rd Speed
+     * String used for SmartDashboard value for 3/4 Speed
      */
-    private static final String ONETHIRD_SPEED_VALUE = "THIRD";
+    private static final String THREE_QUARTERS_SPEED_VALUE = "THREEQUARTERS";
 
     /**
      * String used for SmartDashboard key for Joystick X-Axis Deadzone
@@ -75,25 +75,25 @@ public class DriveControl extends Subsystem {
     private static final double JOYSTICK_DEADZONE_Y_DEFAULT = 0.1;
 
     private static final String LEFT_DRIVE_PID_KP = "Left Drive PID Kp";
-    private static final double LEFT_DRIVE_PID_KP_DEFAULT = 0.2;
+    private static final double LEFT_DRIVE_PID_KP_DEFAULT = 0.013;
     private static final String LEFT_DRIVE_PID_KI = "Left Drive PID Ki";
-    private static final double LEFT_DRIVE_PID_KI_DEFAULT = 0;
+    private static final double LEFT_DRIVE_PID_KI_DEFAULT = 0.001;
     private static final String LEFT_DRIVE_PID_KD = "Left Drive PID Kd";
-    private static final double LEFT_DRIVE_PID_KD_DEFAULT = 0.02;
+    private static final double LEFT_DRIVE_PID_KD_DEFAULT = 0.012;
 
-    private static final String RIGHT_DRIVE_PID_KP = "Left Drive PID Kp";
-    private static final double RIGHT_DRIVE_PID_KP_DEFAULT = 0.2;
-    private static final String RIGHT_DRIVE_PID_KI = "Left Drive PID Ki";
-    private static final double RIGHT_DRIVE_PID_KI_DEFAULT = 0;
-    private static final String RIGHT_DRIVE_PID_KD = "Left Drive PID Kd";
-    private static final double RIGHT_DRIVE_PID_KD_DEFAULT = 0.02;
+    private static final String RIGHT_DRIVE_PID_KP = "Right Drive PID Kp";
+    private static final double RIGHT_DRIVE_PID_KP_DEFAULT = 0.013;
+    private static final String RIGHT_DRIVE_PID_KI = "Right Drive PID Ki";
+    private static final double RIGHT_DRIVE_PID_KI_DEFAULT = 0.001;
+    private static final String RIGHT_DRIVE_PID_KD = "Right Drive PID Kd";
+    private static final double RIGHT_DRIVE_PID_KD_DEFAULT = 0.012;
 
     private static final String GYRO_PID_KP = "Gyro PID Kp";
-    private static final double GYRO_PID_KP_DEFAULT = 7;
+    private static final double GYRO_PID_KP_DEFAULT = 0.14;
     private static final String GYRO_PID_KI = "Gyro PID Ki";
-    private static final double GYRO_PID_KI_DEFAULT = 0;
+    private static final double GYRO_PID_KI_DEFAULT = 0.002;
     private static final String GYRO_PID_KD = "Gyro PID Kd";
-    private static final double GYRO_PID_KD_DEFAULT = 1;
+    private static final double GYRO_PID_KD_DEFAULT = 0.045;
 
     private static final RobotDrive robotDrive = RobotMap.driveControlRobotDrive;
 
@@ -127,7 +127,7 @@ public class DriveControl extends Subsystem {
         autoSpeedChooser = new SendableChooser();
         autoSpeedChooser.addDefault("Full Speed", FULL_SPEED_VALUE);
         autoSpeedChooser.addObject("Half-Speed", HALF_SPEED_VALUE);
-        autoSpeedChooser.addObject("1/3rd Speed", ONETHIRD_SPEED_VALUE);
+        autoSpeedChooser.addObject("3/4 Speed", THREE_QUARTERS_SPEED_VALUE);
         SmartDashboard.putData("Autonomous Speed Selection", autoSpeedChooser);
 
         SmartDashboard.putNumber(JOYSTICK_DEADZONE_X, JOYSTICK_DEADZONE_X_DEFAULT);
@@ -290,8 +290,8 @@ public class DriveControl extends Subsystem {
                 return 1;
             case HALF_SPEED_VALUE:
                 return 0.5f;
-            case ONETHIRD_SPEED_VALUE:
-                return 0.33333f;
+            case THREE_QUARTERS_SPEED_VALUE:
+                return 0.75f;
             default:
                 System.out.println("Unknown autoSpeedSelection: " + speed);
                 return 1f;
