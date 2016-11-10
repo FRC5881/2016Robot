@@ -114,7 +114,7 @@ public class AssistedDrive extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        driveControl.rawDrive(((-1* leftDrivePIDOutput) + rightDrivePIDOutput) / 2, -1 * gyroPIDOutput);
+        driveControl.rawDrive(rightDrivePIDOutput, -1 * gyroPIDOutput);
 
         RobotMap.armArmSpeedController.set(-0.1d);
 
@@ -135,7 +135,7 @@ public class AssistedDrive extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return leftDrivePIDController.onTarget() || rightDrivePIDController.onTarget();
+        return rightDrivePIDController.onTarget();
     }
 
     // Called once after isFinished returns true
