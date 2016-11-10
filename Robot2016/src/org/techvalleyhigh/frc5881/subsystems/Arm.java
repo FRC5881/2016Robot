@@ -64,7 +64,7 @@ public class Arm extends Subsystem {
     private void initSmartDashboard() {
         SmartDashboard.putNumber(SPINNER_EJECT_SPEED, 0.5);
         SmartDashboard.putNumber(SPINNER_INTAKE_SPEED, 0.3);
-        SmartDashboard.putNumber(ARTICULATION_SPEED, 0.3);
+        SmartDashboard.putNumber(ARTICULATION_SPEED, 0.4);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Arm extends Subsystem {
      * when the arm is in a position perpendicular to the floor in a nominal state.
      */
     public void articulateDown() {
-        double value = SmartDashboard.getNumber(ARTICULATION_SPEED, 0.3);
+        double value = SmartDashboard.getNumber(ARTICULATION_SPEED, 0.4);
         armSpeedController.set(value > 0 ? value * -1 : value);
     }
 
@@ -122,7 +122,7 @@ public class Arm extends Subsystem {
      * when the arm is in a position perpendicular to the floor in a nominal state.
      */
     public void articulateUp() {
-        double value = SmartDashboard.getNumber(ARTICULATION_SPEED, 0.3);
+        double value = SmartDashboard.getNumber(ARTICULATION_SPEED, 0.4);
         armSpeedController.set(value < 0 ? value * -1 : value);
     }
 }
